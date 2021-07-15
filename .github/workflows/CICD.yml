@@ -3,10 +3,8 @@ name: CICDJAVA
 on:  
   push:  
     branches-ignore: [ develop, staging ]    
-
   pull_request:  
     branches: [ develop, staging ]
-
   release:
     types: [ created ]
   
