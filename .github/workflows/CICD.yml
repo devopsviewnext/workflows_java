@@ -3,18 +3,11 @@ name: CICDJAVA
 on:  
   push:  
     branches-ignore: [ develop, staging ]    
-
   pull_request:  
     branches: [ develop, staging ]
-
   release:
     types: [ created ]
-
-  workflow_dispatch:
-
-env:
-  GITHUB_CONTEXT: ${{ toJson(github) }}
-
+  
 jobs:
   Build:
     runs-on: ubuntu-latest
@@ -45,22 +38,28 @@ jobs:
       name: Preproduction
       url: 'http://someweb.com'
     steps:
+      - name: Deploy
+        run: echo I am deploying!!!
+  
+  TaggingDeployPreproduction:
+    needs: [DeployPreproduction]    
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2 
+
       - name: Tagging to Staging Branch        
         run: |
             deploymentTag=$(date +'v%Y.%m.%d.%H%M')
-            echo "$deploymentTag"   
-            git config --global user.email "generic_action@github.com"
-            git config --global user.name "generic_action"
-            git fetch
-            git checkout -f --track -B staging remotes/origin/staging --
-            git pull --progress -v --no-rebase --no-ff "origin"
-            git tag -a $deploymentTag -m "Deployment done to staging with id: $deploymentTag" 
-            echo "Tag creado: $deploymentTag"  
-            git push --tags --progress "origin" staging:staging
-            echo "Push creado con el tag: $deploymentTag"
-
-      - name: Deploy
-        run: echo I am deploying!!!
+            echo "$GITHUB_CONTEXT"
+            echo "Tag Id: $deploymentTag"
+            messageTag="Tag $deploymentTag created automatically due to the merge request to staging branch with details: Commit hash: ${{ github.sha }} Username: ${{ github.actor }}."
+            echo "Message Tag: $messageTag"            
+            git config --global user.email ""
+            git config --global user.name "${{ github.actor }}"
+            git tag -a $deploymentTag -m "$messageTag"
+            echo "Tag created: $deploymentTag into staging branch."
+            git push --tags --progress
+            echo "Push created with tag: $deploymentTag"
             
   DeployProduction:
     name: Deploy to Production 
@@ -73,5 +72,3 @@ jobs:
     steps:
       - name: Deploy
         run: echo I am deploying! 
-    env:
-        CI: true
