@@ -46,8 +46,6 @@ jobs:
   TaggingDeployPreproduction:
     needs: [DeployPreproduction]    
     runs-on: ubuntu-latest
-    env:
-      GITHUB_CONTEXT: ${{ toJson(github) }}
     steps:
       - uses: actions/checkout@v2 
         with:
