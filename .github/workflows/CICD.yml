@@ -36,9 +36,6 @@ jobs:
     needs: [Build]
     if: github.event_name == 'pull_request' && github.base_ref == 'staging'
     runs-on: ubuntu-latest
-    env: 
-      PUSHER_EMAIL: ${{ github.event.pusher.email }}
-      PUSHER_NAME: ${{ github.event.pusher.name }}
     environment: 
       name: Preproduction
       url: 'http://someweb.com'
@@ -50,8 +47,8 @@ jobs:
             messageTag="Tag $deploymentTag created automatically due to the merge request to staging branch with details: Commit hash: ${{ github.sha }} Username: ${{ github.event.pusher.name }} Email: ${{ github.event.pusher.email }}."
             echo "Message Tag: $messageTag"            
             echo ""
-            git config --global user.email "$PUSHER_EMAIL"
-            git config --global user.name "$PUSHER_NAME"
+            git config --global user.email "${{ github.event.pusher.email }}"
+            git config --global user.name "${{ github.event.pusher.name }}"
             git fetch
             git checkout -f --track -B staging remotes/origin/staging --
             git pull --progress -v --no-rebase --no-ff "origin"
