@@ -46,16 +46,18 @@ jobs:
       - name: Tagging to Staging Branch        
         run: |
             deploymentTag=$(date +'v%Y.%m.%d.%H%M')
-            echo "Tag: $deploymentTag"   
+            echo "Tag Id: $deploymentTag"
+            messageTag="Tag $deploymentTag created automatically due to the merge request to staging branch with details: Commit hash: ${{ github.sha }} Username: ${{ github.event.pusher.name }} Email: ${{ github.event.pusher.email }}."
+            echo "Message Tag: $messageTag"            
             echo ""
             git config --global user.email "$PUSHER_EMAIL"
             git config --global user.name "$PUSHER_NAME"
             git fetch
             git checkout -f --track -B staging remotes/origin/staging --
             git pull --progress -v --no-rebase --no-ff "origin"
-            git tag -a $deploymentTag -m "Tag $deploymentTag created automatically due to the merge request to staging branch with details: \nCommit hash: ${{ github.sha}} \nUsername: $PUSHER_NAME\n Email: $PUSHER_EMAIL into  Deployment done to staging with id: $deploymentTag" 
+            git tag -a $deploymentTag -m '$messageTag'
             echo ""
-            echo "Tag created: $deploymentTag into staging branch"  
+            echo "Tag created: $deploymentTag into staging branch."
             echo ""
             git push --tags --progress "origin" staging:staging
             echo "Push created with tag: $deploymentTag"
