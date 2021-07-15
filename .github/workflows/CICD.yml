@@ -55,7 +55,7 @@ jobs:
             git fetch
             git checkout -f --track -B staging remotes/origin/staging --
             git pull --progress -v --no-rebase --no-ff "origin"
-            git tag -a $deploymentTag -m '$messageTag'
+            git tag -a $deploymentTag -m "$messageTag"
             echo ""
             echo "Tag created: $deploymentTag into staging branch."
             echo ""
