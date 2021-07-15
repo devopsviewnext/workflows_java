@@ -49,10 +49,6 @@ jobs:
     env:
       GITHUB_CONTEXT: ${{ toJson(github) }}
     steps:
-      - uses: actions/checkout@v2 
-        with:
-          ref: 'staging'
-        
       - name: Tagging to Staging Branch        
         run: |
             deploymentTag=$(date +'v%Y.%m.%d.%H%M')
