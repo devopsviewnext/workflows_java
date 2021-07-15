@@ -3,10 +3,8 @@ name: CICDJAVA
 on:  
   push:  
     branches-ignore: [ develop, staging ]    
-
   pull_request:  
     branches: [ develop, staging ]
-
   release:
     types: [ created ]
   
@@ -48,9 +46,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2 
-        with:
-          ref: 'staging'
-        
+
       - name: Tagging to Staging Branch        
         run: |
             deploymentTag=$(date +'v%Y.%m.%d.%H%M')
