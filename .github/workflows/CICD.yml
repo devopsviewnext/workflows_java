@@ -9,7 +9,9 @@ on:
 
   release:
     types: [ created ]
-
+env:
+  GITHUB_CONTEXT: ${{ toJson(github) }}
+  
 jobs:
   Build:
     runs-on: ubuntu-latest
