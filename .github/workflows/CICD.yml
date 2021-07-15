@@ -10,11 +10,6 @@ on:
   release:
     types: [ created ]
 
-  workflow_dispatch:
-
-env:
-  GITHUB_CONTEXT: ${{ toJson(github) }}
-
 jobs:
   Build:
     runs-on: ubuntu-latest
@@ -41,6 +36,9 @@ jobs:
     needs: [Build]
     if: github.event_name == 'pull_request' && github.base_ref == 'staging'
     runs-on: ubuntu-latest
+    env: 
+      PUSHER_EMAIL: ${{ github.event.pusher.email }}
+      PUSHER_NAME: ${{ github.event.pusher.name }}
     environment: 
       name: Preproduction
       url: 'http://someweb.com'
@@ -48,16 +46,19 @@ jobs:
       - name: Tagging to Staging Branch        
         run: |
             deploymentTag=$(date +'v%Y.%m.%d.%H%M')
-            echo "$deploymentTag"   
-            git config --global user.email "generic_action@github.com"
-            git config --global user.name "generic_action"
+            echo "Tag: $deploymentTag"   
+            echo ""
+            git config --global user.email "$PUSHER_EMAIL"
+            git config --global user.name "$PUSHER_NAME"
             git fetch
             git checkout -f --track -B staging remotes/origin/staging --
             git pull --progress -v --no-rebase --no-ff "origin"
-            git tag -a $deploymentTag -m "Deployment done to staging with id: $deploymentTag" 
-            echo "Tag creado: $deploymentTag"  
+            git tag -a $deploymentTag -m "Tag $deploymentTag created automatically due to the merge request to staging branch with details: \nCommit hash: ${{ github.sha}} \nUsername: $PUSHER_NAME\n Email: $PUSHER_EMAIL into  Deployment done to staging with id: $deploymentTag" 
+            echo ""
+            echo "Tag created: $deploymentTag into staging branch"  
+            echo ""
             git push --tags --progress "origin" staging:staging
-            echo "Push creado con el tag: $deploymentTag"
+            echo "Push created with tag: $deploymentTag"
 
       - name: Deploy
         run: echo I am deploying!!!
@@ -73,5 +74,3 @@ jobs:
     steps:
       - name: Deploy
         run: echo I am deploying! 
-    env:
-        CI: true
