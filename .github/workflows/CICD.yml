@@ -16,11 +16,19 @@ jobs:
 
       - name: Compile
         run: echo ${{ github.release.target_commitish }} ${{ github.event_name }} - ${{ github.base_ref }} - ${{ github.ref }} - ${{ github.event.pull_request.merged }} - ${{ github.event.action }} $GITHUB_CONTEXT - Compile Step..
-    
+        
+  Testing:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Unit Testing
+        run: echo "Unit testing"
+
   DeployDev:
     name: Deploy to Dev 
     if: github.event_name == 'pull_request' && github.base_ref == 'develop'
-    needs: [Build]
+    needs: [Build, Testing]
     runs-on: ubuntu-latest
     environment: 
       name: Development
@@ -31,7 +39,7 @@ jobs:
     
   DeployPreproduction:
     name: Deploy to Preproduction 
-    needs: [Build]
+    needs: [Build, Testing]
     if: github.event_name == 'pull_request' && github.base_ref == 'staging'
     runs-on: ubuntu-latest
     environment: 
@@ -64,7 +72,7 @@ jobs:
   DeployProduction:
     name: Deploy to Production 
     if: github.event_name == 'release'
-    needs: [Build]
+    needs: [Build, Testing]
     runs-on: ubuntu-latest
     environment: 
       name: Production
