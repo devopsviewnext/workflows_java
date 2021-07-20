@@ -93,6 +93,7 @@ jobs:
 
   HotFixProduction:
     name: Deploy HotFix into Production 
+    if: github.event_name == 'release'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
