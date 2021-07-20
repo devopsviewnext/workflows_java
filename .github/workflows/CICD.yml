@@ -43,7 +43,6 @@ jobs:
     
   DeployPreproduction:
     name: Deploy to Preproduction 
-    needs: [Build, Testing]
     if: github.event_name == 'pull_request' && github.ref == 'staging' && github.event.pull_request.merged == 'true'
     runs-on: ubuntu-latest
     environment: 
