@@ -2,7 +2,7 @@ name: CICDJAVA
 
 on:  
   push:  
-    branches-ignore: [ develop, staging ]    
+    branches-ignore: [ master, develop, staging ]    
   pull_request:  
     branches: [ develop, staging ]
     types:  [ opened, closed ]
