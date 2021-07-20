@@ -5,7 +5,7 @@ on:
     branches-ignore: [ develop, staging ]    
   pull_request:  
     branches: [ develop, staging ]
-    types:  [ created, closed ]
+    types:  [ opened, closed ]
   release:
     types: [ created ]
   
