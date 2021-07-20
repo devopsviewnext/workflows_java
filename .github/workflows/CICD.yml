@@ -5,6 +5,7 @@ on:
     branches-ignore: [ develop, staging ]    
   pull_request:  
     branches: [ develop, staging ]
+    types:  [ closed ]
   release:
     types: [ created ]
   
@@ -35,7 +36,9 @@ jobs:
       name: Development
       url: 'http://someweb.com'
     steps:
-      - name: Deploy
+      - name: Upload to code artifactory
+        run: echo Uploading snapshot artifactory....
+      - name: Code Deploy
         run: echo Deploying Dev....   
     
   DeployPreproduction:
@@ -47,8 +50,12 @@ jobs:
       name: Preproduction
       url: 'http://someweb.com'
     steps:
-      - name: Deploy
-        run: echo I am deploying!!!!
+      - name: Getting snapshot artifact from code artifactory
+        run: echo Getting snapshot artifact from code artifactory....
+      - name: Upload to code artifactory (Release)
+        run: echo Uploading release artifactory ....
+      - name: Code Deploy
+        run: echo Deploying Preproduction...!
   
   TaggingDeployPreproduction:
     needs: [DeployPreproduction]    
@@ -79,5 +86,21 @@ jobs:
       name: Production
       url: 'http://someweb.com'
     steps:
-      - name: Deploy
-        run: echo I am deploying! 
+      - name: Getting release artifact from code artifactory
+        run: echo Getting release artifact from code artifactory....
+      - name: Code Deploy
+        run: echo Deploying Production...!
+
+  HotFixProduction:
+    name: Deploy HotFix into Production 
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Compile Code
+        run: echo Compile code..
+      - name: Unit Testing 
+        run: echo Unit Testing ..
+      - name: Create and upload release artifact
+        run: echo Creating and upload release artifact....
+      - name: Code Deploy
+        run: echo Deploying Production...!
