@@ -8,6 +8,12 @@ on:
     types:  [ opened, closed ]
   release:
     types: [ created ]
+    tags:
+     - 'v*.*.*.*:*'
+     - 'HOTFIX_'
+      
+env:
+  GITHUB_CONTEXT: ${{ toJson(github) }}
   
 jobs:
   Build:
@@ -79,7 +85,7 @@ jobs:
             
   DeployProduction:
     name: Deploy to Production 
-    if: github.event_name == 'release'
+    if: (github.event_name == 'release' && startsWith(github.ref, 'refs/tags') && !contains(github.ref, 'refs/tags/HOTFIX_'))
     needs: [Build, Testing]
     runs-on: ubuntu-latest
     environment: 
@@ -93,9 +99,12 @@ jobs:
 
   HotFixProduction:
     name: Deploy HotFix into Production 
-    if: github.event_name == 'release' && contains('refs/tags/HotFix_', github.ref)
+    if: (github.event_name == 'release' && startsWith(github.ref, 'refs/tags/HOTFIX_'))
     needs: [Build, Testing]
     runs-on: ubuntu-latest
+    environment: 
+      name: Production
+      url: 'http://someweb.com'
     steps:
       - uses: actions/checkout@v2
       - name: Compile Code
