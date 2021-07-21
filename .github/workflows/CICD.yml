@@ -93,7 +93,7 @@ jobs:
 
   HotFixProduction:
     name: Deploy HotFix into Production 
-    if: github.event_name == 'release'
+    if: github.event_name == 'release' && contains('refs/tags/HotFix_', github.ref)
     needs: [Build, Testing]
     runs-on: ubuntu-latest
     steps:
